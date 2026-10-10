@@ -196,8 +196,98 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   const Text('Don’t have an account?'),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SignUpScreen(),
+                        ),
+                      );
+                    },
                     child: const Text('Create one'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Create account',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Join Teep and start building your creative circle.',
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Full name',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Email address',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                obscureText: true,
+                decoration: const InputDecoration(
+                  hintText: 'Password',
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MainShell(),
+                      ),
+                    );
+                  },
+                  child: const Text('Create account'),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Already have an account?'),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Log in'),
                   ),
                 ],
               ),
@@ -219,19 +309,32 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = [
-    HomeFeedScreen(),
-    DiscoverScreen(),
-    MessagesScreen(),
-    ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      const HomeFeedScreen(),
+      const DiscoverScreen(),
+      const MessagesScreen(),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: _pages,
+        children: pages,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            builder: (_) => const CreatePostSheet(),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -357,6 +460,19 @@ class MockData {
       comments: 77,
       shares: 22,
     ),
+    Post(
+      author: 'Sophia Lee',
+      handle: '@sophial',
+      time: '8h ago',
+      title: 'Why great ideas feel simple',
+      content:
+          'The best products usually start with a simple story, then a structured system around it. Simplicity is a strategy.',
+      imageUrl:
+          'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+      likes: 2120,
+      comments: 142,
+      shares: 58,
+    ),
   ];
 }
 
@@ -429,7 +545,17 @@ class HomeFeedScreen extends StatelessWidget {
             delegate: SliverChildBuilderDelegate(
               (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: PostCard(post: MockData.posts[index]),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PostDetailScreen(post: MockData.posts[index]),
+                      ),
+                    );
+                  },
+                  child: PostCard(post: MockData.posts[index]),
+                ),
               ),
               childCount: MockData.posts.length,
             ),
@@ -614,6 +740,251 @@ class _StatChip extends StatelessWidget {
       return '${(value / 1000).toStringAsFixed(1)}k';
     }
     return value.toString();
+  }
+}
+
+class PostDetailScreen extends StatelessWidget {
+  final Post post;
+
+  const PostDetailScreen({super.key, required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 260,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.network(
+                post.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            pinned: true,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(
+                          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              post.author,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '${post.handle} • ${post.time}',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    post.title,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    post.content,
+                    style: const TextStyle(
+                      height: 1.7,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Row(
+                    children: [
+                      _StatChip(icon: Icons.favorite_border, value: post.likes),
+                      const SizedBox(width: 12),
+                      _StatChip(icon: Icons.chat_bubble_outline, value: post.comments),
+                      const SizedBox(width: 12),
+                      _StatChip(icon: Icons.share_outlined, value: post.shares),
+                    ],
+                  ),
+                  const SizedBox(height: 22),
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Comments',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 14),
+                  _CommentTile(
+                    name: 'Maya',
+                    text: 'This is such a strong perspective. It feels simple and useful.',
+                  ),
+                  _CommentTile(
+                    name: 'Alex',
+                    text: 'Love the idea of designing around clarity and momentum.',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommentTile extends StatelessWidget {
+  final String name;
+  final String text;
+
+  const _CommentTile({super.key, required this.name, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F5FB),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundImage: NetworkImage(
+              'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  text,
+                  style: const TextStyle(color: Colors.black87, height: 1.5),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CreatePostSheet extends StatelessWidget {
+  const CreatePostSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Create Post',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            minLines: 3,
+            maxLines: 6,
+            decoration: const InputDecoration(
+              hintText: 'What are you thinking about?',
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              _AttachChip(icon: Icons.image_outlined, label: 'Photo'),
+              const SizedBox(width: 10),
+              _AttachChip(icon: Icons.videocam_outlined, label: 'Video'),
+              const SizedBox(width: 10),
+              _AttachChip(icon: Icons.mic_outlined, label: 'Audio'),
+            ],
+          ),
+          const SizedBox(height: 22),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Publish'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AttachChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _AttachChip({super.key, required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F5FB),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18),
+          const SizedBox(width: 8),
+          Text(label),
+        ],
+      ),
+    );
   }
 }
 
