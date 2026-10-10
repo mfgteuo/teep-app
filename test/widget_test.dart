@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:teep/main.dart';
 
 void main() {
-  testWidgets('app loads', (tester) async {
+  testWidgets('app shows welcome screen', (tester) async {
     await tester.pumpWidget(const TeepApp());
-    expect(find.text('Good morning, Hana'), findsOneWidget);
+    expect(find.text('Welcome back'), findsOneWidget);
   });
 }
