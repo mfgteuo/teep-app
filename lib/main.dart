@@ -127,16 +127,16 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              TextField(
-                decoration: const InputDecoration(
+              const TextField(
+                decoration: InputDecoration(
                   hintText: 'Email or username',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
+              const TextField(
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Password',
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
@@ -165,8 +165,8 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 18),
-              Row(
-                children: const [
+              const Row(
+                children: [
                   Expanded(child: Divider()),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
@@ -244,23 +244,23 @@ class SignUpScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
               const SizedBox(height: 24),
-              TextField(
-                decoration: const InputDecoration(
+              const TextField(
+                decoration: InputDecoration(
                   hintText: 'Full name',
                   prefixIcon: Icon(Icons.person_outline),
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                decoration: const InputDecoration(
+              const TextField(
+                decoration: InputDecoration(
                   hintText: 'Email address',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
+              const TextField(
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Password',
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
@@ -836,11 +836,11 @@ class PostDetailScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 14),
-                  _CommentTile(
+                  const _CommentTile(
                     name: 'Maya',
                     text: 'This is such a strong perspective. It feels simple and useful.',
                   ),
-                  _CommentTile(
+                  const _CommentTile(
                     name: 'Alex',
                     text: 'Love the idea of designing around clarity and momentum.',
                   ),
@@ -858,7 +858,11 @@ class _CommentTile extends StatelessWidget {
   final String name;
   final String text;
 
-  const _CommentTile({super.key, required this.name, required this.text});
+  const _CommentTile({
+    super.key,
+    required this.name,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -872,7 +876,7 @@ class _CommentTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 18,
             backgroundImage: NetworkImage(
               'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
@@ -931,20 +935,20 @@ class CreatePostSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          TextField(
+          const TextField(
             minLines: 3,
             maxLines: 6,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'What are you thinking about?',
             ),
           ),
           const SizedBox(height: 18),
-          Row(
+          const Row(
             children: [
               _AttachChip(icon: Icons.image_outlined, label: 'Photo'),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               _AttachChip(icon: Icons.videocam_outlined, label: 'Video'),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               _AttachChip(icon: Icons.mic_outlined, label: 'Audio'),
             ],
           ),
@@ -966,7 +970,11 @@ class _AttachChip extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _AttachChip({super.key, required this.icon, required this.label});
+  const _AttachChip({
+    super.key,
+    required this.icon,
+    required this.label,
+  });
 
   @override
   Widget build(BuildContext context) {
